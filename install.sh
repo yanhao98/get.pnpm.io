@@ -98,7 +98,8 @@ download_and_install() {
 
   # install to PNPM_HOME, defaulting to ~/.pnpm
   tmp_dir="$(mktemp -d)" || abort "Tmpdir Error!"
-  trap 'rm -rf "$tmp_dir"' EXIT INT TERM HUP
+  # shellcheck disable=SC2064
+  trap "rm -rf '$tmp_dir'" EXIT INT TERM HUP
 
   ohai "Downloading pnpm binaries ${version}"
   # download the binary to the specified directory
