@@ -65,12 +65,12 @@ if ($PSVersionTable.PSVersion.Major -ge 6) {
 }
 
 if ($platform -eq 'win') {
-  if ([System.Environment]::Is64BitOperatingSystem -eq $true) {
-    $architecture = 'x64'
-  }
-
-  if ([System.Environment]::Is64BitOperatingSystem -eq $false) {
-    $architecture = 'i686'
+  $arch = $env:PROCESSOR_ARCHITECTURE
+  switch ($arch) {
+    'AMD64' { $architecture = 'x64'; Break }
+    'ARM64' { $architecture = 'arm64'; Break }
+    'x86' { $architecture = 'i686'; Break }
+    Default { $architecture = 'x64' }
   }
 
   $pnpmName = "pnpm.exe"
@@ -122,8 +122,8 @@ if ($null -eq $version) {
 
 Write-Host "Downloading pnpm from GitHub...`n" -ForegroundColor Green
 
-$tempFileFolder = New-TemporaryDirectory
-$tempFile = (Join-Path $tempFileFolder.FullName $pnpmName)
+tempFileFolder = New-TemporaryDirectory
+tempFile = (Join-Path $tempFileFolder.FullName $pnpmName)
 $archiveUrl="https://github.com/pnpm/pnpm/releases/download/v$version/pnpm-$platform-$architecture"
 if ($platform -eq 'win') {
   $archiveUrl="$archiveUrl.exe"
